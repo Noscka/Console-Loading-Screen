@@ -1,0 +1,7 @@
+Requires Fontlab -> https://www.fontlab.com/font-editor/fontlab/
+
+1. Open CustomConsola.vfj
+2. edit
+3. file -> Export Font as...
+4. HAS TO EXPORT AS TTF (OpenType TT option)
+5. Profit $$
