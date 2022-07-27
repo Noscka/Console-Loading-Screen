@@ -67,6 +67,18 @@ bool LoadingScreen::FileExists(const std::string& name)
 
 void LoadingScreen::StartLoading()
 {
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
+	columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+	if (SplashScreen == L"")
+		SplashScreenYSize = 0;
+	else
+	{
+		//SplashScreenYSize = std::count(SplashScreen.begin(), SplashScreen.end(), '\n') + 3;
+		SplashScreenYSize = rows - 4;
+	}
+
 	switch (BarType)
 	{
 	case Unknown:
@@ -85,11 +97,15 @@ void LoadingScreen::UpdateKnownProgressBar(float percentageDone)
 
 void LoadingScreen::KnownProgressLoad()
 {
+	wprintf(SplashScreen.c_str());
+
 	std::thread FunctionThread([this] { this->ThreadingFunction(); });
 
-	std::wstring bar = L"";
-	int Lenght = 10;
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
+	columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
+	std::wstring bar = L"";
+	int Lenght = 50;
 
 	while (PercentageDone < 1 && !CrossThreadFinishBoolean)
 	{
@@ -101,10 +117,10 @@ void LoadingScreen::KnownProgressLoad()
 		left -= floor(left);
 		bar += std::wstring(floor(left / 0.5), L'▌');
 
-		std::wcout << bar << std::endl;
+		wprintf((std::wstring(((columns / 2) - Lenght / 2), ' ') + bar + L'\n').c_str());
 
 		Sleep(100);
-		LoadingScreen::ClearCurrentLine(0);
+		LoadingScreen::ClearCurrentLine(SplashScreenYSize);
 		bar = L"";
 	}
 
@@ -114,9 +130,13 @@ void LoadingScreen::KnownProgressLoad()
 
 void LoadingScreen::UnknownProgressLoad()
 {
+	wprintf(SplashScreen.c_str());
+
 	std::thread FunctionThread ([this] { this->ThreadingFunction(); });
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
+	columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
-
+	//std::wstring bar = L"▁▁ ▂▂ ▃▃ ▃▃ ▅▅ ▆▆ ▇▇ ██ ▇▇ ▆▆ ▅▅ ▄▄ ▃▃ ▂▂ ▁▁";
 	std::wstring bar = L"▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂ ▁";
 
 	int MidPosition = std::ceil((float)bar.length() / 2); /* For tracking the middle character character */
@@ -129,12 +149,12 @@ void LoadingScreen::UnknownProgressLoad()
 			GoingRight = !GoingRight;
 		if (GoingRight)
 		{
-			std::wcout << MoveRight(&bar) << std::endl;
+			wprintf((std::wstring(((columns / 2) - bar.length() / 2), ' ') + MoveRight(&bar) + L'\n').c_str());
 			MidPosition++;
 		}
 		else
 		{
-			std::wcout << MoveLeft(&bar) << std::endl;
+			wprintf((std::wstring(((columns / 2) - bar.length() / 2), ' ') + MoveLeft(&bar) + L'\n').c_str());
 			MidPosition--;
 		}
 
@@ -147,7 +167,7 @@ void LoadingScreen::UnknownProgressLoad()
 			sleepTime = ((float)(TrueMid + Difference + 1) / 15) * 50;
 		}
 		Sleep(sleepTime);
-		ClearCurrentLine(0);
+		LoadingScreen::ClearCurrentLine(SplashScreenYSize);
 	}
 
 	FunctionThread.join();

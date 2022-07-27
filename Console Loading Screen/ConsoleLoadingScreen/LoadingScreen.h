@@ -14,17 +14,23 @@ class LoadingScreen
 private:
 	static std::wstring FontFile;
 
+	std::wstring SplashScreen;
+	int SplashScreenYSize;
 	float PercentageDone;
 
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	HANDLE ConsoleHandle;
+	int columns, rows;
+
+
+
 	void KnownProgressLoad();
-
 	void UnknownProgressLoad();
-
 	void ThreadingFunction();
+	static bool FileExists(const std::string& name);
 public:
 	static void InitilizeFont();
 	static void TerminateFont();
-	static bool FileExists(const std::string& name);
 	static void ClearCurrentLine(int Position);
 
 	enum LoadType
@@ -38,12 +44,15 @@ public:
 
 	bool CrossThreadFinishBoolean;
 
-	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*))
+	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*), std::wstring splashScreen = L"")
 	{
-		PercentageDone = 0;
-		CrossThreadFinishBoolean = false;
 		BarType = barType;
 		LoadingFunction = Function;
+		SplashScreen = splashScreen;
+
+		PercentageDone = 0;
+		CrossThreadFinishBoolean = false;
+		ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 
 	void StartLoading();
