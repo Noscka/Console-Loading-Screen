@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
+#include <functional>
+#include <thread>
 
 #include "../resource.h"
 
@@ -15,6 +17,7 @@ public:
 	static void InitilizeFont();
 	static void TerminateFont();
 	static bool FileExists(const std::string& name);
+	static void ClearCurrentLine(int Position);
 
 	enum LoadType
 	{
@@ -23,19 +26,25 @@ public:
 	};
 
 	LoadType BarType;
+	void (*LoadingFunction)(LoadingScreen*);
 
-	LoadingScreen(LoadType barType)
+	bool CrossThreadFinishBoolean;
+
+	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*))
 	{
+		CrossThreadFinishBoolean = false;
 		BarType = barType;
+		LoadingFunction = Function;
 	}
 
 	void StartLoading();
 
-	void KnownProgressLoad();
+	void KnownProgressLoad(float percentageDone);
 
 	void UnknownProgressLoad();
 
-	void ClearCurrentLine(int Position);
+	void ThreadingFunction();
+
 
 	std::wstring MoveRight(std::wstring* string);
 

@@ -73,26 +73,52 @@ void LoadingScreen::StartLoading()
 		UnknownProgressLoad();
 		break;
 	case Known:
-		KnownProgressLoad();
+		KnownProgressLoad(0);
 		break;
 	}
 }
 
-void LoadingScreen::KnownProgressLoad()
+void LoadingScreen::KnownProgressLoad(float percentageDone)
 {
-	std::wcout << "Known Bar" << std::endl;
+	std::thread FunctionThread([this] { this->ThreadingFunction(); });
+
+	std::wstring bar = L"";
+	int Lenght = 10;
+
+
+	while (percentageDone < 1)
+	{
+
+		float left = percentageDone * Lenght;
+
+		bar += std::wstring(floor(left), L'█');
+
+		left -= floor(left);
+		bar += std::wstring(floor(left / 0.5), L'▌');
+
+		std::wcout << bar << std::endl;
+
+		Sleep(100);
+		LoadingScreen::ClearCurrentLine(0);
+		bar = L"";
+	}
+
+	FunctionThread.join();
 }
 
 
 void LoadingScreen::UnknownProgressLoad()
 {
+	std::thread FunctionThread ([this] { this->ThreadingFunction(); });
+
+
 	std::wstring bar = L"▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂ ▁";
 
 	int MidPosition = std::ceil((float)bar.length() / 2); /* For tracking the middle character character */
 	int TrueMid = std::ceil((float)bar.length() / 2); /* Middle absolute position */
 	bool GoingRight = true; /* Tracking the direction in which the bar is going in */
 
-	for (int i = 0; i < 100; i++)
+	while (!CrossThreadFinishBoolean)
 	{
 		if (MidPosition == 1 || MidPosition == bar.length())
 			GoingRight = !GoingRight;
@@ -118,6 +144,14 @@ void LoadingScreen::UnknownProgressLoad()
 		Sleep(sleepTime);
 		ClearCurrentLine(0);
 	}
+
+	FunctionThread.join();
+}
+
+void LoadingScreen::ThreadingFunction()
+{
+	(*LoadingFunction)(this);
+	(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
 }
 
 void LoadingScreen::ClearCurrentLine(int Position)

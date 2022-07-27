@@ -29,12 +29,22 @@ std::wstring GetLastErrorAsString()
 	return message;
 }
 
+void LongFunctionTing(LoadingScreen* Object)
+{
+	for (int i = 0; i < 100; i++)
+	{
+		Sleep(10);
+		Object->KnownProgressLoad((float)i/100.0);
+	}
+}
+
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
+
 	LoadingScreen::InitilizeFont();
 
-	LoadingScreen basic = LoadingScreen(LoadingScreen::Unknown);
+	LoadingScreen basic = LoadingScreen(LoadingScreen::Known, &LongFunctionTing);
 	basic.StartLoading();
 	
 		
