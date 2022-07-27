@@ -1,20 +1,8 @@
 ﻿#include <iostream>
-#include <thread>
-
 #include <fcntl.h>
 #include <io.h>
-#include <stdint.h>
-#include <iostream>
-#include <string>
 
-#include <fstream>
-
-// SetConsoleOutputCP
-#include <Windows.h>
-
-#include "resource.h"
-
-#include <filesystem>
+#include "ConsoleLoadingScreen/LoadingScreen.h"
 
 std::wstring GetLastErrorAsString()
 {
@@ -41,143 +29,17 @@ std::wstring GetLastErrorAsString()
 	return message;
 }
 
-void ClearCurrentLine(int Position)
-{
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	COORD tl = { 0, (SHORT)(Position) };
-	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
-	DWORD written, cells = csbi.dwSize.X;
-	FillConsoleOutputCharacter(ConsoleHandle, ' ', cells, tl, &written);
-	FillConsoleOutputAttribute(ConsoleHandle, csbi.wAttributes, cells, tl, &written);
-	SetConsoleCursorPosition(ConsoleHandle, tl);
-}
-
-std::wstring MoveRight(std::wstring *string)
-{
-	wchar_t LastChar = (*string)[string->length() - 1];
-	for (int ii = string->length() - 1; ii >= 0; ii--)
-	{
-		if (ii == 0)
-			(*string)[0] = LastChar;
-		else
-			(*string)[ii] = (*string)[ii -1];
-	}
-
-	return *string;
-}
-
-std::wstring MoveLeft(std::wstring *string)
-{
-	wchar_t LastChar = (*string)[0];
-	for (int ii = 0; ii <= string->length() - 1; ii++)
-	{
-		if (ii == string->length() - 1)
-		{
-			(*string)[ii] = LastChar;
-		}
-		else
-			(*string)[ii] = (*string)[ii+1];
-	}
-
-	return *string;
-}
-
-bool FileExists(const std::string& name)
-{
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
-}
-
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
-	std::wstring FontFile = L"Resources\\CustomConsola.ttf";
+	LoadingScreen::InitilizeFont();
 
-#pragma region Extract font from resource
-	std::filesystem::create_directory("Resources"); /* Make Resources Direcory */
-
-	if (!FileExists("Resources\\CustomConsola.ttf")) /* Check if Font file already exists*/
-	{
-		HINSTANCE hResInstance = (HINSTANCE)GetModuleHandle(NULL);
-		HRSRC ResourceHandle = FindResource(hResInstance, MAKEINTRESOURCE(IDR_CUSTOM_CONSOLA_FONT), L"XFONT");
-
-		HGLOBAL ResourceMemory = LoadResource(hResInstance, ResourceHandle);
-
-		void* ResourceData = LockResource(ResourceMemory);
-
-		size_t ResourceLenght = SizeofResource(hResInstance, ResourceHandle);
-		HANDLE hFile = CreateFile(L"Resources\\CustomConsola.ttf", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-		DWORD bytesWritten = ResourceLenght;
-
-		WriteFile(hFile, ResourceData, ResourceLenght, &bytesWritten, NULL);
-		CloseHandle(hFile);
-	}
-#pragma endregion
-
-#pragma region Add Font Resource
-	if (AddFontResourceEx(FontFile.c_str(), NULL, NULL) == 0)
-	{
-		throw std::exception("Font add fails");
-	}
-#pragma endregion
-
-#pragma region Make console use font
-	CONSOLE_FONT_INFOEX cfi = { 0 };
-
-	cfi.cbSize = sizeof(cfi);
-	cfi.nFont = 0;
-	cfi.dwFontSize.X = 0;
-	cfi.dwFontSize.Y = 16;
-	cfi.FontFamily = FF_DONTCARE;
-	cfi.FontWeight = FW_NORMAL;
-	wcscpy_s(cfi.FaceName, L"Custom Consolas");
-	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &cfi);
-#pragma endregion
-
-	//std::wstring bar = L"▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂ ▁";
-	std::wstring bar = L"▁ ▂ ▃ ▄ ▅ ▆ ☐ ╳ ☐ ▆ ▅ ▄ ▃ ▂ ▁";
-
-	int MidPosition = std::ceil((float)bar.length()/2); /* For tracking the middle character character */
-	int TrueMid = std::ceil((float)bar.length() / 2); /* Middle absolute position */
-	bool GoingRight = true; /* Tracking the direction in which the bar is going in */
-
-	for (int i = 0; i < 100; i++)
-	{
-		if (MidPosition == 1 || MidPosition == bar.length())
-			GoingRight = !GoingRight;
-		if (GoingRight)
-		{
-			std::wcout << MoveRight(&bar) << std::endl;
-			MidPosition++;
-		}
-		else
-		{
-			std::wcout << MoveLeft(&bar) << std::endl;
-			MidPosition--;
-		}
-
-		int sleepTime = 0;
-		if(MidPosition >= TrueMid)
-			sleepTime = ((float)(MidPosition+1)/15)*50;
-		else
-		{
-			int Difference = TrueMid - MidPosition;
-			sleepTime = ((float)(TrueMid+Difference+1) / 15) * 50;
-		}
-		Sleep(sleepTime);
-		ClearCurrentLine(0);
-	}
+	LoadingScreen basic = LoadingScreen(LoadingScreen::Known);
+	basic.StartLoading();
+	
 		
 	system("Pause");
-
-#pragma region Remove Font Resource
-	if (RemoveFontResourceEx(FontFile.c_str(), NULL, NULL) == 0)
-	{
-		throw std::exception("Font remove fails");
-	}
-#pragma endregion
+	LoadingScreen::TerminateFont();
 	return 0;
 }
 

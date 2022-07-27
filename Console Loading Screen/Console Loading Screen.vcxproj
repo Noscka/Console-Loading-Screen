@@ -152,11 +152,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Console Loading Screen.cpp" />
+    <ClCompile Include="ConsoleLoadingScreen\LoadingScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Resource\CustomConsola.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleLoadingScreen\LoadingScreen.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
