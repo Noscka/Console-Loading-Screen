@@ -34,7 +34,7 @@ int main()
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	LoadingScreen::InitilizeFont();
 
-	LoadingScreen basic = LoadingScreen(LoadingScreen::Known);
+	LoadingScreen basic = LoadingScreen(LoadingScreen::Unknown);
 	basic.StartLoading();
 	
 		

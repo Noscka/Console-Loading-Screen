@@ -70,21 +70,21 @@ void LoadingScreen::StartLoading()
 	switch (BarType)
 	{
 	case Unknown:
-		BasicBar();
+		UnknownProgressLoad();
 		break;
 	case Known:
-		Loadingbar();
+		KnownProgressLoad();
 		break;
 	}
 }
 
-void LoadingScreen::Loadingbar()
+void LoadingScreen::KnownProgressLoad()
 {
 	std::wcout << "Known Bar" << std::endl;
 }
 
 
-void LoadingScreen::BasicBar()
+void LoadingScreen::UnknownProgressLoad()
 {
 	std::wstring bar = L"▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂ ▁";
 

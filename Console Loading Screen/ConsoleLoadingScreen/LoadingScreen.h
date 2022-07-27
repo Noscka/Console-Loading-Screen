@@ -31,9 +31,9 @@ public:
 
 	void StartLoading();
 
-	void Loadingbar();
+	void KnownProgressLoad();
 
-	void BasicBar();
+	void UnknownProgressLoad();
 
 	void ClearCurrentLine(int Position);
 
