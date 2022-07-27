@@ -107,6 +107,7 @@ void LoadingScreen::KnownProgressLoad()
 	std::wstring bar = L"";
 	int Lenght = 50;
 
+	SetConsoleCursorPosition(ConsoleHandle, { 0, (SHORT)SplashScreenYSize });
 	while (PercentageDone < 1 && !CrossThreadFinishBoolean)
 	{
 
@@ -142,6 +143,8 @@ void LoadingScreen::UnknownProgressLoad()
 	int MidPosition = std::ceil((float)bar.length() / 2); /* For tracking the middle character character */
 	int TrueMid = std::ceil((float)bar.length() / 2); /* Middle absolute position */
 	bool GoingRight = true; /* Tracking the direction in which the bar is going in */
+
+	SetConsoleCursorPosition(ConsoleHandle, {0, (SHORT)SplashScreenYSize });
 
 	while (!CrossThreadFinishBoolean)
 	{

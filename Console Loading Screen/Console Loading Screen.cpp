@@ -63,7 +63,7 @@ int main()
                            ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
                                ▀▀▀▀▀        ▀▀▀▀▀)";
 
-	LoadingScreen basic = LoadingScreen(LoadingScreen::Known, &LongFunctionTing, splash);
+	LoadingScreen basic = LoadingScreen(LoadingScreen::Unknown, &LongFunctionTing, splash);
 	basic.StartLoading();
 	
 		
