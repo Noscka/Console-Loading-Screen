@@ -73,12 +73,17 @@ void LoadingScreen::StartLoading()
 		UnknownProgressLoad();
 		break;
 	case Known:
-		KnownProgressLoad(0);
+		KnownProgressLoad();
 		break;
 	}
 }
 
-void LoadingScreen::KnownProgressLoad(float percentageDone)
+void LoadingScreen::UpdateKnownProgressBar(float percentageDone)
+{
+	PercentageDone = percentageDone;
+}
+
+void LoadingScreen::KnownProgressLoad()
 {
 	std::thread FunctionThread([this] { this->ThreadingFunction(); });
 
@@ -86,10 +91,10 @@ void LoadingScreen::KnownProgressLoad(float percentageDone)
 	int Lenght = 10;
 
 
-	while (percentageDone < 1)
+	while (PercentageDone < 1 && !CrossThreadFinishBoolean)
 	{
 
-		float left = percentageDone * Lenght;
+		float left = PercentageDone * Lenght;
 
 		bar += std::wstring(floor(left), L'█');
 

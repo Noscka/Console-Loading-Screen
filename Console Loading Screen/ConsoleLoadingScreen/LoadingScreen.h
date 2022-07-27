@@ -13,6 +13,14 @@ class LoadingScreen
 {
 private:
 	static std::wstring FontFile;
+
+	float PercentageDone;
+
+	void KnownProgressLoad();
+
+	void UnknownProgressLoad();
+
+	void ThreadingFunction();
 public:
 	static void InitilizeFont();
 	static void TerminateFont();
@@ -32,6 +40,7 @@ public:
 
 	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*))
 	{
+		PercentageDone = 0;
 		CrossThreadFinishBoolean = false;
 		BarType = barType;
 		LoadingFunction = Function;
@@ -39,12 +48,7 @@ public:
 
 	void StartLoading();
 
-	void KnownProgressLoad(float percentageDone);
-
-	void UnknownProgressLoad();
-
-	void ThreadingFunction();
-
+	void UpdateKnownProgressBar(float percentageDone);
 
 	std::wstring MoveRight(std::wstring* string);
 

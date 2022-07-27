@@ -31,10 +31,10 @@ std::wstring GetLastErrorAsString()
 
 void LongFunctionTing(LoadingScreen* Object)
 {
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i <= 100; i++)
 	{
 		Sleep(10);
-		Object->KnownProgressLoad((float)i/100.0);
+		Object->UpdateKnownProgressBar((float)i/100.0);
 	}
 }
 
