@@ -6,6 +6,15 @@ std::wstring LoadingScreen::FontFile = L"Resources\\CustomConsola.ttf";
 
 void LoadingScreen::InitilizeFont()
 {
+#pragma region Change working directory to exe
+	{
+		wchar_t buffer[_MAX_PATH];
+		GetModuleFileName(NULL, buffer, _MAX_PATH);
+
+		std::filesystem::current_path(std::wstring(buffer).substr(0, std::wstring(buffer).find_last_of(L"\\/") + 1));
+	}
+#pragma endregion
+
 #pragma region Extract font from resource
 	std::filesystem::create_directory("Resources"); /* Make Resources Direcory */
 

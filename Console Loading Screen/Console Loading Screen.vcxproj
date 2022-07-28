@@ -159,10 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleLoadingScreen\LoadingScreen.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="Resource\resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Console Loading Screen.rc" />
+    <ResourceCompile Include="Resource\Console Loading Screen.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

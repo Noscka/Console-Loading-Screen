@@ -7,7 +7,7 @@
 #include <functional>
 #include <thread>
 
-#include "../resource.h"
+#include "../Resource/resource.h"
 
 class LoadingScreen
 {

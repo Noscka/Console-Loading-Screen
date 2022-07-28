@@ -41,7 +41,6 @@ void LongFunctionTing(LoadingScreen* Object)
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
-
 	LoadingScreen::InitilizeFont();
 
 	std::wstring splash = LR"(
