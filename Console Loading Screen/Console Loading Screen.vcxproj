@@ -158,7 +158,7 @@
     <Font Include="Resource\CustomConsola.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleLoadingScreen\LoadingScreen.h" />
+    <ClInclude Include="ConsoleLoadingScreen\LoadingScreen.hpp" />
     <ClInclude Include="Resource\resource.h" />
   </ItemGroup>
   <ItemGroup>

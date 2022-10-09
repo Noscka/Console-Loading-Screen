@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <io.h>
 
-#include "ConsoleLoadingScreen/LoadingScreen.h"
+#include "ConsoleLoadingScreen/LoadingScreen.hpp"
 
 std::wstring GetLastErrorAsString()
 {
@@ -34,7 +34,7 @@ void LongFunctionTing(LoadingScreen* Object)
 	for (int i = 0; i <= 1000; i++)
 	{
 		Sleep(10);
-		Object->UpdateKnownProgressBar((float)i/1000.0);
+		Object->UpdateKnownProgressBar((float)i/1000.0, L"Testing Status");
 	}
 }
 
@@ -81,4 +81,4 @@ int main()
 ▍						    ▍
 ▎						    ▎
 ▏						    ▏
-█████████████████████████████*/
+████████████████████████████*/
