@@ -29,18 +29,28 @@ std::wstring GetLastErrorAsString()
 	return message;
 }
 
-void LongFunctionTing(LoadingScreen* Object)
+void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 {
 	for (int i = 0; i <= 1000; i++)
 	{
 		Sleep(10);
 		Object->UpdateKnownProgressBar((float)i/1000.0, L"Testing Status");
 	}
+	*argue = L"Completed ting innit fam";
+}
+
+template<typename ... Ts>
+void ArgumentTing(void (*Function)(LoadingScreen*, Ts ...))
+{
+
 }
 
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
+
+	ArgumentTing(&LongFunctionTing);
+
 	LoadingScreen::InitilizeFont();
 
 	std::wstring splash = LR"(
@@ -62,7 +72,7 @@ int main()
                            ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
                                ▀▀▀▀▀        ▀▀▀▀▀)";
 
-	LoadingScreen basic = LoadingScreen(LoadingScreen::Unknown, &LongFunctionTing, splash);
+	LoadingScreen basic(LoadingScreen::LoadType::Unknown, &LongFunctionTing, splash);
 	basic.StartLoading();
 	
 		
