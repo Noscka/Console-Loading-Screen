@@ -39,17 +39,9 @@ void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 	*argue = L"Completed ting innit fam";
 }
 
-template<typename ... Ts>
-void ArgumentTing(void (*Function)(LoadingScreen*, Ts ...))
-{
-
-}
-
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
-
-	ArgumentTing(&LongFunctionTing);
 
 	LoadingScreen::InitilizeFont();
 
