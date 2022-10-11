@@ -30,10 +30,9 @@ private:
 	int columns, rows;
 
 	LoadType BarType;
-	void (*LoadingFunction)(LoadingScreen*, ...);
+	void (*LoadingFunction)(LoadingScreen*);
 
-	template<typename ... variadic>
-	void KnownProgressLoad(variadic&& ... Args)
+	void KnownProgressLoad()
 	{
 		wprintf(SplashScreen.c_str());
 
@@ -67,8 +66,7 @@ private:
 		FunctionThread.join();
 	}
 
-	template<typename ... variadic>
-	void UnknownProgressLoad(variadic&& ... Args)
+	void UnknownProgressLoad()
 	{
 		wprintf(SplashScreen.c_str());
 
@@ -116,10 +114,9 @@ private:
 		FunctionThread.join();
 	}
 
-	template<typename ... variadic>
-	void ThreadingFunction(variadic&& ... Args)
+	void ThreadingFunction()
 	{
-		(*LoadingFunction)(this, Args);
+		(*LoadingFunction)(this);
 		(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
 	}
 	static bool FileExists(const std::string& name)
@@ -204,7 +201,7 @@ public:
 
 	bool CrossThreadFinishBoolean;
 
-	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*, ...), std::wstring splashScreen = L"")
+	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*), std::wstring splashScreen = L"")
 	{
 		BarType = barType;
 		LoadingFunction = Function;
@@ -215,8 +212,7 @@ public:
 		ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 
-	template<typename ... variadic>
-	void StartLoading(variadic&& ... Args)
+	void StartLoading()
 	{
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
