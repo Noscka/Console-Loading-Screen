@@ -34,7 +34,7 @@ void LongFunctionTing(LoadingScreen* Object)
 	for (int i = 0; i <= 1000; i++)
 	{
 		Sleep(10);
-		Object->UpdateKnownProgressBar((float)i/1000.0, L"Testing Status");
+		Object->UpdateKnownProgressBar((float)i/1000.0, L"Ting");
 	}
 }
 
@@ -63,8 +63,7 @@ int main()
                            ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
                                ▀▀▀▀▀        ▀▀▀▀▀)";
 
-	LoadingScreen basic(LoadingScreen::LoadType::Known, &LongFunctionTing, splash);
-	basic.StartLoading();
+	LoadingScreen basic(LoadingScreen::LoadType::Known, splash, &LongFunctionTing);
 	
 		
 	system("Pause");

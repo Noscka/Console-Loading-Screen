@@ -30,13 +30,13 @@ private:
 	int columns, rows;
 
 	LoadType BarType;
-	void (*LoadingFunction)(LoadingScreen*);
 
-	void KnownProgressLoad()
+	template <typename F, typename ... ArgsT>
+	void KnownProgressLoad(F&& callable, ArgsT&& ... args)
 	{
 		wprintf(SplashScreen.c_str());
 
-		std::thread FunctionThread([this] { this->ThreadingFunction(); });
+		std::thread FunctionThread([this] { this->ThreadingFunction(); }, callable, std::forward<ArgsT>(args)...);
 
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
@@ -66,11 +66,12 @@ private:
 		FunctionThread.join();
 	}
 
-	void UnknownProgressLoad()
+	template <typename F, typename ... ArgsT>
+	void UnknownProgressLoad(F&& callable, ArgsT&& ... args)
 	{
 		wprintf(SplashScreen.c_str());
 
-		std::thread FunctionThread([this] { this->ThreadingFunction(); });
+		std::thread FunctionThread([this] { this->ThreadingFunction(); }, callable, std::forward<ArgsT>(args)...);
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
@@ -114,11 +115,38 @@ private:
 		FunctionThread.join();
 	}
 
-	void ThreadingFunction()
+	template <typename F>
+	void ThreadingFunction(F&& callable)
 	{
-		(*LoadingFunction)(this);
+		(*callable)(this);
 		(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
 	}
+
+	template <typename F>
+	void StartLoading(F&& callable)
+	{
+		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
+		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+		rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+		if (SplashScreen == L"")
+			SplashScreenYSize = 0;
+		else
+		{
+			SplashScreenYSize = rows - 4;
+		}
+
+		switch (BarType)
+		{
+		case Unknown:
+			UnknownProgressLoad(callable, std::forward<ArgsT>(args) ...);
+			break;
+		case Known:
+			KnownProgressLoad(callable, std::forward<ArgsT>(args) ...);
+			break;
+		}
+	}
+
 	static bool FileExists(const std::string& name)
 	{
 		struct stat buffer;
@@ -201,39 +229,17 @@ public:
 
 	bool CrossThreadFinishBoolean;
 
-	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*), std::wstring splashScreen = L"")
+	template <typename F>
+	LoadingScreen(LoadType barType, std::wstring splashScreen, F&& callable)
 	{
 		BarType = barType;
-		LoadingFunction = Function;
 		SplashScreen = splashScreen;
 
 		PercentageDone = 0;
 		CrossThreadFinishBoolean = false;
 		ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	}
 
-	void StartLoading()
-	{
-		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
-		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-		rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-		if (SplashScreen == L"")
-			SplashScreenYSize = 0;
-		else
-		{
-			SplashScreenYSize = rows - 4;
-		}
-
-		switch (BarType)
-		{
-		case Unknown:
-			UnknownProgressLoad();
-			break;
-		case Known:
-			KnownProgressLoad();
-			break;
-		}
+		StartLoading(callable);
 	}
 
 	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage)
