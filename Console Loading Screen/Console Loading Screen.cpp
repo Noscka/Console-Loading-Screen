@@ -34,7 +34,7 @@ void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 	for (int i = 0; i <= 500; i++)
 	{
 		Sleep(10);
-		Object->UpdateKnownProgressBar((float)i/500.0, L"Testing Status");
+		Object->UpdateKnownProgressBar((float)i / 500.0, LoadingScreen::CenterString(L"Testing Status\nExtra Line,\n Innit", true));
 	}
 	*argue = L"Completed ting innit fam";
 }
