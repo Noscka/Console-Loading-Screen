@@ -122,31 +122,6 @@ private:
 		(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
 	}
 
-	template <typename F>
-	void StartLoading(F&& callable)
-	{
-		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
-		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-		rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-		if (SplashScreen == L"")
-			SplashScreenYSize = 0;
-		else
-		{
-			SplashScreenYSize = rows - 4;
-		}
-
-		switch (BarType)
-		{
-		case Unknown:
-			UnknownProgressLoad(callable, std::forward<ArgsT>(args) ...);
-			break;
-		case Known:
-			KnownProgressLoad(callable, std::forward<ArgsT>(args) ...);
-			break;
-		}
-	}
-
 	static bool FileExists(const std::string& name)
 	{
 		struct stat buffer;
@@ -269,7 +244,6 @@ public:
 		PercentageDone = percentageDone;
 		StatusMessage = statusMessage;
 	}
-
 
 	std::wstring MoveRight(std::wstring* string)
 	{
