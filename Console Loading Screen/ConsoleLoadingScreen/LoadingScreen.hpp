@@ -30,14 +30,13 @@ private:
 	int columns, rows;
 
 	LoadType BarType;
-	void (*LoadingFunction)(LoadingScreen*, ...);
 
-	template<typename ... variadic>
-	void KnownProgressLoad(variadic&& ... Args)
+	template <typename Func, typename ... VariadicArgs>
+	void KnownProgressLoad(Func&& callable, VariadicArgs&& ... args)
 	{
 		wprintf(SplashScreen.c_str());
 
-		std::thread FunctionThread([this] { this->ThreadingFunction(); });
+		std::thread FunctionThread([this](Func&& callable, VariadicArgs&& ... args) { this->ThreadingFunction(callable, std::forward<VariadicArgs>(args)...); }, callable, std::forward<VariadicArgs>(args)...);
 
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
@@ -67,12 +66,12 @@ private:
 		FunctionThread.join();
 	}
 
-	template<typename ... variadic>
-	void UnknownProgressLoad(variadic&& ... Args)
+	template <typename Func, typename ... VariadicArgs>
+	void UnknownProgressLoad(Func&& callable, VariadicArgs&& ... args)
 	{
 		wprintf(SplashScreen.c_str());
 
-		std::thread FunctionThread([this] { this->ThreadingFunction(); });
+		std::thread FunctionThread([this](Func&& callable, VariadicArgs&& ... args) { this->ThreadingFunction(callable, std::forward<VariadicArgs>(args)...); }, callable, std::forward<VariadicArgs>(args)...);
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
@@ -84,7 +83,7 @@ private:
 
 		SetConsoleCursorPosition(ConsoleHandle, { 0, (SHORT)SplashScreenYSize });
 
-		while (!CrossThreadFinishBoolean)
+		while (PercentageDone < 1 && !CrossThreadFinishBoolean)
 		{
 			if (MidPosition == 1 || MidPosition == bar.length())
 				GoingRight = !GoingRight;
@@ -116,10 +115,10 @@ private:
 		FunctionThread.join();
 	}
 
-	template<typename ... variadic>
-	void ThreadingFunction(variadic&& ... Args)
+	template <typename Func, typename ... VariadicArgs>
+	void ThreadingFunction(Func&& callable, VariadicArgs&& ... args)
 	{
-		(*LoadingFunction)(this, Args);
+		(*callable)(this, std::forward<VariadicArgs>(args)...);
 		(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
 	}
 	static bool FileExists(const std::string& name)
@@ -204,10 +203,9 @@ public:
 
 	bool CrossThreadFinishBoolean;
 
-	LoadingScreen(LoadType barType, void (*Function)(LoadingScreen*, ...), std::wstring splashScreen = L"")
+	LoadingScreen(LoadType barType, std::wstring splashScreen = L"")
 	{
 		BarType = barType;
-		LoadingFunction = Function;
 		SplashScreen = splashScreen;
 
 		PercentageDone = 0;
@@ -215,8 +213,8 @@ public:
 		ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 
-	template<typename ... variadic>
-	void StartLoading(variadic&& ... Args)
+	template <typename Func, typename ... VariadicArgs>
+	void StartLoading(Func&& callable, VariadicArgs&& ... args)
 	{
 		GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 		columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
@@ -232,15 +230,15 @@ public:
 		switch (BarType)
 		{
 		case Unknown:
-			UnknownProgressLoad();
+			UnknownProgressLoad(std::forward<Func>(callable), std::forward<VariadicArgs>(args)...);
 			break;
 		case Known:
-			KnownProgressLoad();
+			KnownProgressLoad(std::forward<Func>(callable), std::forward<VariadicArgs>(args)...);
 			break;
 		}
 	}
 
-	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage)
+	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage = L"")
 	{
 		PercentageDone = percentageDone;
 		StatusMessage = statusMessage;

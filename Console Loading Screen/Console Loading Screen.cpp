@@ -31,10 +31,10 @@ std::wstring GetLastErrorAsString()
 
 void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 {
-	for (int i = 0; i <= 1000; i++)
+	for (int i = 0; i <= 500; i++)
 	{
 		Sleep(10);
-		Object->UpdateKnownProgressBar((float)i/1000.0, L"Testing Status");
+		Object->UpdateKnownProgressBar((float)i/500.0, L"Testing Status");
 	}
 	*argue = L"Completed ting innit fam";
 }
@@ -64,9 +64,11 @@ int main()
                            ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
                                ▀▀▀▀▀        ▀▀▀▀▀)";
 
-	LoadingScreen basic(LoadingScreen::LoadType::Unknown, &LongFunctionTing, splash);
-	basic.StartLoading();
-	
+	LoadingScreen basic(LoadingScreen::LoadType::Known, splash);
+
+	std::wstring PString(L"SomeTing");
+	basic.StartLoading(&LongFunctionTing, &PString);
+	std::wcout << PString << std::endl;
 		
 	system("Pause");
 	LoadingScreen::TerminateFont();
