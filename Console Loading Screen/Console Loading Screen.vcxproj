@@ -159,14 +159,14 @@
     <ClCompile Include="ConsoleLoadingScreen\LoadingScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Resource\CustomConsola.ttf" />
+    <Font Include="ConsoleLoadingScreen\Resource\CustomConsola.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleLoadingScreen\LoadingScreen.hpp" />
-    <ClInclude Include="Resource\resource.h" />
+    <ClInclude Include="ConsoleLoadingScreen\Resource\resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Console Loading Screen.rc" />
+    <ResourceCompile Include="ConsoleLoadingScreen\Resource\Console Loading Screen.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
