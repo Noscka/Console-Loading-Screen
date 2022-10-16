@@ -50,7 +50,7 @@ END
 // xFont
 //
 
-IDR_CUSTOM_CONSOLA_FONT xFONT                    "Resource\\CustomConsola.ttf"
+IDR_CUSTOM_CONSOLA_FONT xFONT                    "ConsoleLoadingScreen\\Resource\\CustomConsola.ttf"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
