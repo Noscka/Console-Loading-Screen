@@ -229,6 +229,7 @@ public:
 		SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &cfi);
 		/* Make console use font */
 	}
+
 	static void TerminateFont()
 	{
 		/* Remove Font Resource */

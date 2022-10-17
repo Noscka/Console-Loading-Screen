@@ -39,6 +39,12 @@ void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 	*argue = L"Completed ting innit fam";
 }
 
+void SomeFunction(std::wstring *string)
+{
+	LoadingScreen basic(LoadingScreen::LoadType::Known, L"");
+	basic.StartLoading(&LongFunctionTing, std::ref(string));
+}
+
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
@@ -64,10 +70,9 @@ int main()
                            ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
                                ▀▀▀▀▀        ▀▀▀▀▀)";
 
-	LoadingScreen basic(LoadingScreen::LoadType::Known, splash);
 
 	std::wstring PString(L"SomeTing");
-	basic.StartLoading(&LongFunctionTing, &PString);
+	SomeFunction(&PString);
 	std::wcout << PString << std::endl;
 		
 	system("Pause");
