@@ -39,10 +39,15 @@ void LongFunctionTing(LoadingScreen* Object, std::wstring* argue)
 	*argue = L"Completed ting innit fam";
 }
 
-void SomeFunction(std::wstring *string)
+void Function2(std::wstring* string)
 {
 	LoadingScreen basic(LoadingScreen::LoadType::Known, L"");
 	basic.StartLoading(&LongFunctionTing, std::ref(string));
+}
+
+void Function1(std::wstring *string)
+{
+	Function2(string);
 }
 
 int main()
@@ -72,7 +77,7 @@ int main()
 
 
 	std::wstring PString(L"SomeTing");
-	SomeFunction(&PString);
+	Function1(&PString);
 	std::wcout << PString << std::endl;
 		
 	system("Pause");
