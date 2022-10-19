@@ -301,13 +301,15 @@ public:
 		}
 	}
 
-	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage = L"", bool centerString = true, bool centerAll = true)
+	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage = L"") //, bool centerString = true, bool centerAll = true)
 	{
 		PercentageDone = percentageDone;
-		if (centerString)
-			StatusMessage = std::async(std::launch::async, CenterString, statusMessage, centerAll).get();
-		else
-			StatusMessage = statusMessage;
+		StatusMessage = statusMessage;
+
+		//if (centerString)
+		//	StatusMessage = std::async(std::launch::async, CenterString, statusMessage, centerAll).get();
+		//else
+		//	StatusMessage = statusMessage;
 	}
 
 	void Finish()
