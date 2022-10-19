@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp> 
 
+#include <future>
 #include <Windows.h>
 #include <string>
 #include <filesystem>
@@ -300,10 +301,13 @@ public:
 		}
 	}
 
-	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage = L"")
+	void UpdateKnownProgressBar(float percentageDone, std::wstring statusMessage = L"", bool centerString = true, bool centerAll = true)
 	{
 		PercentageDone = percentageDone;
-		StatusMessage = statusMessage;
+		if (centerString)
+			StatusMessage = std::async(std::launch::async, CenterString, statusMessage, centerAll).get();
+		else
+			StatusMessage = statusMessage;
 	}
 
 	void Finish()
